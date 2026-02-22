@@ -189,20 +189,22 @@ async function sendDailySummary() {
 
 function startWhatsApp() {
     client = new Client({
-        authStrategy: new LocalAuth({ dataPath: './sessions' }),
+        authStrategy: new LocalAuth({
+            dataPath: './sessions'
+        }),
         puppeteer: {
-            browserWSEndpoint: undefined,
-            executablePath: puppeteer.executablePath(),
             headless: true,
+            browser: puppeteer,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-gpu'
+                '--disable-gpu',
+                '--no-zygote',
+                '--single-process'
             ]
         }
     });
-
     client.on('qr', (qr) => {
         console.log('\n=== SCAN THIS QR WITH WHATSAPP ===\n');
         qrcode.generate(qr, { small: true });

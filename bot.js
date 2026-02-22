@@ -4,6 +4,7 @@ const qrcode = require('qrcode-terminal');
 const schedule = require('node-schedule');
 const axios = require('axios');
 const fs = require('fs');
+const puppeteer = require('puppeteer');
 
 const BUSINESS = {
     name: "Veachoc",

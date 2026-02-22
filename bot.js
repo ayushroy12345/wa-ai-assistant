@@ -16,7 +16,7 @@ const BUSINESS = {
     ownerPhone: process.env.OWNER_PHONE || "" // Set via environment variable
 };
 
-const OPENROUTER_API = "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";
+const OPENROUTER_API = process.env.OPENROUTER_API_KEY;
 const MODEL = "mistralai/mixtral-8x7b-instruct";
 
 let client;

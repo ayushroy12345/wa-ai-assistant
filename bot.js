@@ -191,16 +191,14 @@ function startWhatsApp() {
     client = new Client({
         authStrategy: new LocalAuth({ dataPath: './sessions' }),
         puppeteer: {
+            browserWSEndpoint: undefined,
+            executablePath: puppeteer.executablePath(),
             headless: true,
-            executablePath: '/opt/render/.cache/puppeteer/chrome/linux-145.0.7632.77/chrome-linux64/chrome',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--no-first-run',
-                '--no-zygote',
-                '--single-process'
+                '--disable-gpu'
             ]
         }
     });

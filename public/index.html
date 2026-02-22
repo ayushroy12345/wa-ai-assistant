@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Veachoc - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #075e54; margin-bottom: 20px; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 32px; font-weight: bold; color: #075e54; }
+        .stat-label { color: #666; font-size: 14px; }
+        .leads-table { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #075e54; color: white; padding: 15px; text-align: left; }
+        td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f9f9f9; }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; }
+        .badge-hot { background: #ffebee; color: #c62828; }
+        .badge-new { background: #e8f5e9; color: #2e7d32; }
+        .refresh { display: inline-block; margin-bottom: 20px; color: #075e54; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/leads" class="refresh">🔄 Refresh</a>
+        <h1>📊 Veachoc Dashboard</h1>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalLeads">-</div>
+                <div class="stat-label">Total Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayLeads">-</div>
+                <div class="stat-label">New Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="hotLeads">-</div>
+                <div class="stat-label">Hot Leads</div>
+            </div>
+        </div>
+        <h2 style="margin-bottom: 15px; color: #333;">Recent Leads</h2>
+        <div class="leads-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Requirement</th>
+                        <th>Budget</th>
+                        <th>City</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        fetch('/leads')
+            .then(r => r.json())
+            .then(leads => {
+                const today = new Date().toDateString();
+                const todayLeads = leads.filter(l => new Date(l.createdAt).toDateString() === today);
+                const hotLeads = leads.filter(l => l.name && (l.budget || l.requirement));
+                
+                document.getElementById('totalLeads').textContent = leads.length;
+                document.getElementById('todayLeads').textContent = todayLeads.length;
+                document.getElementById('hotLeads').textContent = hotLeads.length;
+                
+                const tbody = document.getElementById('leadsBody');
+                leads.slice().reverse().slice(0, 10).forEach(lead => {
+                    const isHot = lead.name && (lead.budget || lead.requirement);
+                    const row = `<tr>
+                        <td>${lead.name || '-'}</td>
+                        <td>${lead.phone || '-'}</td>
+                        <td>${lead.requirement || '-'}</td>
+                        <td>${lead.budget || '-'}</td>
+                        <td>${lead.city || '-'}</td>
+                        <td><span class="badge ${isHot ? 'badge-hot' : 'badge-new'}">${isHot ? '🔥 Hot' : 'New'}</span></td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            });
+    </script>
+</body>
+</html>
